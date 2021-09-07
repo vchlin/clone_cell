@@ -1,12 +1,12 @@
 [package]
 name = "clone_cell_derive"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2018"
 authors = ["Vektorlynk"]
 license = "MIT OR Apache-2.0"
 description = "Proc macro for clone_cell"
 repository = "https://github.com/Vektorlynk/clone_cell"
-documentation = "https://doc.rs/clone_cell_derive"
+documentation = "https://docs.rs/clone_cell_derive"
 
 [lib]
 proc-macro = true
