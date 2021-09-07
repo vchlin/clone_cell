@@ -1,0 +1,91 @@
+#[cfg(feature = "derive")]
+pub use crate::derive::PureClone;
+
+/// A restrictive form of `Clone` that does not mutate the containing `Cell`.
+///
+/// Conceptually, the relationship between `Copy`, `Clone`, and `PureClone` can be
+/// thought of as follows: `Copy: PureClone: Clone`
+///
+/// `PureClone` is `unsafe` because the `clone` implementation must not mutate the
+/// content of `Cell` through the `&self` reference it gets through interior
+/// mutability. See this [Stack Overflow answer] and this [Rust forum thread] for
+/// details.
+///
+/// [Stack Overflow answer]:
+/// https://stackoverflow.com/questions/39667868/why-can-cell-in-rust-only-be-used-for-copy-and-not-clone-types
+/// [Rust forum thread]:
+/// https://users.rust-lang.org/t/why-does-cell-require-copy-instead-of-clone/5769/2
+// TODO: Rename?
+pub unsafe trait PureClone: Clone {}
+
+/// Implementations for types that are known to have compliant `clone` implementations.
+mod impls {
+    use std::rc::{Rc, Weak};
+
+    use super::PureClone;
+
+    macro_rules! impl_pure_clone {
+        ($($t:ty)*) => {
+            $(
+                unsafe impl PureClone for $t {}
+            )*
+        }
+    }
+
+    macro_rules! impl_pure_clone_rc {
+        ($($i:ident<$j:ident>)*) => {
+            $(
+                unsafe impl<T> PureClone for $i<T> {}
+            )*
+        }
+    }
+
+    macro_rules! impl_pure_clone_generic {
+        ($($i:ident<$($j:ident),*>)*) => {
+            $(
+                unsafe impl<$($j),*> PureClone for $i<$($j),*> where $($j: PureClone),* {}
+            )*
+        }
+    }
+
+    macro_rules! impl_pure_clone_tuples {
+        ($(($($i:ident),*))*) => {
+            $(
+                unsafe impl<$($i),*> PureClone for ($($i,)*) where $($i: PureClone),* {}
+            )*
+        }
+    }
+
+    impl_pure_clone! {
+        usize u8 u16 u32 u64 u128
+        isize i8 i16 i32 i64 i128
+        f32 f64
+        bool char
+    }
+
+    impl_pure_clone_rc! {
+        Rc<T> Weak<T>
+    }
+
+    impl_pure_clone_generic! {
+        Box<T>
+        Option<T>
+        Result<T, E>
+    }
+
+    impl_pure_clone_tuples! {
+        ()
+        (A)
+        (A, B)
+        (A, B, C)
+        (A, B, C, D)
+        (A, B, C, D, E)
+        (A, B, C, D, E, F)
+        (A, B, C, D, E, F, G)
+        (A, B, C, D, E, F, G, H)
+        (A, B, C, D, E, F, G, H, I)
+        (A, B, C, D, E, F, G, H, I, J)
+        (A, B, C, D, E, F, G, H, I, J, K)
+        (A, B, C, D, E, F, G, H, I, J, K, L)
+    }
+}

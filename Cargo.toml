@@ -1,0 +1,26 @@
+[package]
+name = "clone_cell"
+version = "0.1.0"
+edition = "2018"
+authors = ["Vektorlynk"]
+license = "MIT OR Apache-2.0"
+description = "A Cell that works with a restrictive form of Clone"
+repository = "https://github.com/Vektorlynk/clone_cell"
+documentation = "https://doc.rs/clone_cell"
+readme = "README.md"
+keywords = ["clone", "cell", "mutability"]
+
+[features]
+default = ["derive"]
+derive = ["clone_cell_derive"]
+
+[dependencies]
+clone_cell_derive = { version = "0.1.0", path = "derive", optional = true }
+
+[dev-dependencies]
+trybuild = "1.0.45"
+
+[workspace]
+members = [
+    "derive"
+]
