@@ -21,8 +21,12 @@ x.set(Rc::new(42));
 assert_eq!(*x.get(), 42);
 ```
 
-We can also use the provided proc macro to automatically derive `PureClone` for types when they only contain fields that are `PureClone`.
+## Limitations
+
+- Similar to `std::cell::Cell`, this `Cell` is `!Sync`.
+- `PureClone` is currently only implemented for some types from the standard library. I hope to support user types as well with a proc macro so that we can automatically derive `PureClone` for types when they only contain fields that are `PureClone`:
 ```rust
+// Not supported yet!
 #[derive(PureClone, Clone)]
 struct Foo {
     x: i32,
@@ -37,9 +41,9 @@ assert_eq!(f.get().x, 42);
 ## Safety
 
 I believe this is sound, because `PureClone` is unsafe to implement. This trait is implemented for:
-1. `Copy` types;
-2. Types that perform a shallow clone such as `Rc` and `Weak`; and
-3. Types whose `clone` methods are known to be safe, such as those that only contain fields that are `PureClone`.
+- `Copy` types;
+- Types that perform a shallow clone such as `Rc` and `Weak`; and
+- Types whose `clone` methods are known to be safe, such as those that only contain fields that are `PureClone`.
 
 Please let me know if you find any soundness issues!
 

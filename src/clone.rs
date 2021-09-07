@@ -1,5 +1,5 @@
-#[cfg(feature = "derive")]
-pub use crate::derive::PureClone;
+//#[cfg(feature = "derive")]
+//pub use crate::derive::PureClone;
 
 /// A restrictive form of `Clone` that does not mutate the containing `Cell`.
 ///
@@ -15,10 +15,6 @@ pub use crate::derive::PureClone;
 /// https://stackoverflow.com/questions/39667868/why-can-cell-in-rust-only-be-used-for-copy-and-not-clone-types
 /// [Rust forum thread]:
 /// https://users.rust-lang.org/t/why-does-cell-require-copy-instead-of-clone/5769/2
-///
-/// ## Derivable
-///
-/// This trait can be `#[derive]`d if all fields are `PureClone`.
 // TODO: Rename?
 pub unsafe trait PureClone: Clone {}
 
