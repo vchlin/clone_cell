@@ -1,7 +1,23 @@
+//! Shareable mutable containers.
+
 use core::{cell::UnsafeCell, mem};
 
 use crate::clone::PureClone;
 
+/// A mutable memory location.
+///
+/// # Examples
+///
+/// `Cell` works with some non-`Copy` types such as `Rc`:
+/// ```
+/// use std::rc::Rc;
+/// use clone_cell::cell::Cell;
+///
+/// let x = Cell::new(Rc::new(0));
+/// x.set(Rc::new(42));
+/// assert_eq!(*x.get(), 42);
+/// ```
+#[repr(transparent)]
 pub struct Cell<T> {
     value: UnsafeCell<T>,
 }
@@ -18,6 +34,9 @@ impl<T> Cell<T> {
     /// Sets the contained value.
     #[inline]
     pub fn set(&self, value: T) {
+        // It's important to move the value out first. This prevents potential
+        // recursion that can otherwise occur when dropping if `T` contains a
+        // reference back to this `Cell`, and `T::drop` calls us again.
         let old = self.replace(value);
         drop(old);
     }

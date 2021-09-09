@@ -1,3 +1,7 @@
+//! The `PureClone` trait, which is a subtrait of [`Clone`].
+//!
+//! [`Clone`]: https://doc.rust-lang.org/std/clone/trait.Clone.html
+
 //#[cfg(feature = "derive")]
 //pub use crate::derive::PureClone;
 
@@ -15,7 +19,6 @@
 /// https://stackoverflow.com/questions/39667868/why-can-cell-in-rust-only-be-used-for-copy-and-not-clone-types
 /// [Rust forum thread]:
 /// https://users.rust-lang.org/t/why-does-cell-require-copy-instead-of-clone/5769/2
-// TODO: Rename?
 pub unsafe trait PureClone: Clone {}
 
 /// Implementations for types that are known to have compliant `clone` implementations.
