@@ -1,21 +1,26 @@
+//! The `PureClone` trait, which is a subtrait of [`Clone`].
+
 //#[cfg(feature = "derive")]
 //pub use crate::derive::PureClone;
 
-/// A restrictive form of `Clone` that does not mutate the containing `Cell`.
+/// A restrictive form of `Clone` that does not mutate the containing [`Cell`].
 ///
-/// Conceptually, the relationship between `Copy`, `Clone`, and `PureClone` can be
-/// thought of as follows: `Copy: PureClone: Clone`
+/// Conceptually, the relationship between [`Copy`], [`Clone`], and `PureClone` can be
+/// thought of as follows:
+/// ```text
+/// Copy: PureClone: Clone
+/// ```
 ///
 /// `PureClone` is `unsafe` because the `clone` implementation must not mutate the
-/// content of `Cell` through the `&self` reference it gets through interior
+/// content of `Cell` through the `&self` reference it gets with interior
 /// mutability. See this [Stack Overflow answer] and this [Rust forum thread] for
 /// details.
 ///
+/// [`Cell`]: crate::cell::Cell
+/// [Rust forum thread]:
+/// https://users.rust-lang.org/t/why-does-cell-require-copy-instead-of-clone/5769/3
 /// [Stack Overflow answer]:
 /// https://stackoverflow.com/questions/39667868/why-can-cell-in-rust-only-be-used-for-copy-and-not-clone-types
-/// [Rust forum thread]:
-/// https://users.rust-lang.org/t/why-does-cell-require-copy-instead-of-clone/5769/2
-// TODO: Rename?
 pub unsafe trait PureClone: Clone {}
 
 /// Implementations for types that are known to have compliant `clone` implementations.
