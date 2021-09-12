@@ -14,7 +14,7 @@
 //!
 //! [`PureClone`]: crate::clone::PureClone
 
-use core::{cell::UnsafeCell, mem};
+use core::{cell::UnsafeCell, mem, ptr};
 
 use crate::clone::PureClone;
 
@@ -36,7 +36,10 @@ use crate::clone::PureClone;
 /// assert_eq!(*x.get(), 42);
 /// ```
 #[repr(transparent)]
-pub struct Cell<T> {
+pub struct Cell<T>
+where
+    T: ?Sized,
+{
     value: UnsafeCell<T>,
 }
 
@@ -77,6 +80,33 @@ impl<T> Cell<T> {
         drop(old);
     }
 
+    /// Swaps the values of two `Cell`s. Unlike `std::mem::swap`, this does not
+    /// require a `&mut` reference.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::rc::Rc;
+    /// use clone_cell::cell::Cell;
+    ///
+    /// let c1 = Cell::new(Rc::new(21));
+    /// let c2 = Cell::new(Rc::new(42));
+    /// c1.swap(&c2);
+    /// assert_eq!(42, *c1.get());
+    /// assert_eq!(21, *c2.get());
+    /// ```
+    #[inline]
+    pub fn swap(&self, other: &Self) {
+        if ptr::eq(self, other) {
+            return;
+        }
+        // SAFETY: Only safe because `Cell` is `!Sync`. Also, no pointers are
+        // invalidated since `Cell` never returns references to its content.
+        unsafe {
+            ptr::swap(self.value.get(), other.value.get());
+        }
+    }
+
     /// Replaces the contained value with `value` and returns the old value.
     ///
     /// # Examples
@@ -104,6 +134,7 @@ impl<T> Cell<T> {
     /// let c = Cell::new(42);
     /// assert_eq!(c.into_inner(), 42);
     /// ```
+    // TODO: Mark `const` once stabilized.
     pub fn into_inner(self) -> T {
         self.value.into_inner()
     }
@@ -132,4 +163,100 @@ impl<T> Cell<T> {
         // SAFETY: Only safe because `Cell` is `!Sync`.
         unsafe { (*self.value.get()).clone() }
     }
+
+    // TODO:
+    // pub fn update
+
+    /// Takes the value of the `Cell`, leaving a `Default::default()` in its place.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use clone_cell::cell::Cell;
+    ///
+    /// let c = Cell::new(42);
+    /// let i = c.take();
+    /// assert_eq!(i, 42);
+    /// assert_eq!(c.into_inner(), 0);
+    /// ```
+    pub fn take(&self) -> T
+    where
+        T: Default,
+    {
+        self.replace(Default::default())
+    }
 }
+
+impl<T> Cell<T>
+where
+    T: ?Sized,
+{
+    /// Returns a raw pointer to the underlying data in this `Cell`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use clone_cell::cell::Cell;
+    ///
+    /// let c = Cell::new(42);
+    /// let p = c.as_ptr();
+    /// ```
+    #[inline]
+    pub const fn as_ptr(&self) -> *mut T {
+        self.value.get()
+    }
+
+    /// Returns a mutable reference to the underlying data. This method requires
+    /// `&mut self`, ensuring the caller has the only reference to it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use clone_cell::cell::Cell;
+    ///
+    /// let mut c = Cell::new(42);
+    /// *c.get_mut() += 1;
+    /// assert_eq!(c.get(), 43);
+    /// ```
+    #[inline]
+    pub fn get_mut(&mut self) -> &mut T {
+        self.value.get_mut()
+    }
+
+    /// Returns a `&Cell<T>` from a `&mut T`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use clone_cell::cell::Cell;
+    ///
+    /// let i = &mut 42;
+    /// let c = Cell::from_mut(i);
+    /// assert_eq!(c.get(), 42);
+    /// ```
+    pub fn from_mut(t: &mut T) -> &Cell<T> {
+        // SAFETY: `&mut` is unique.
+        unsafe { &*(t as *mut T as *const Cell<T>) }
+    }
+}
+
+impl<T> Cell<[T]> {
+    /// Returns a `&[Cell<T>]` from a `&Cell<[T]>`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use clone_cell::cell::Cell;
+    ///
+    /// let s: &mut [i32] = &mut [0, 1, 2];
+    /// let cs: &Cell<[i32]> = Cell::from_mut(s);
+    /// let sc: &[Cell<i32>] = cs.as_slice_of_cells();
+    /// assert_eq!(sc.len(), 3);
+    /// ```
+    pub fn as_slice_of_cells(&self) -> &[Cell<T>] {
+        // SAFETY: `Cell<T>` has the same memory layout as `T`.
+        unsafe { &*(self as *const Self as *const [Cell<T>]) }
+    }
+}
+
+// TODO: Implement CoerceUnsized
