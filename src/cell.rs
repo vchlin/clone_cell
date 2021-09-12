@@ -112,12 +112,13 @@ impl<T> Cell<T> {
     /// # Examples
     ///
     /// ```
+    /// use std::rc::Rc;
     /// use clone_cell::cell::Cell;
     ///
-    /// let c = Cell::new(42);
-    /// assert_eq!(c.get(), 42);
-    /// assert_eq!(c.replace(2), 42);
-    /// assert_eq!(c.get(), 2);
+    /// let c = Cell::new(Rc::new(42));
+    /// assert_eq!(*c.get(), 42);
+    /// assert_eq!(*c.replace(Rc::new(2)), 42);
+    /// assert_eq!(*c.get(), 2);
     /// ```
     pub fn replace(&self, value: T) -> T {
         // SAFETY: Only safe because `Cell` is `!Sync`.
@@ -148,12 +149,12 @@ impl<T> Cell<T> {
     /// use clone_cell::cell::Cell;
     ///
     /// let p = Rc::new(42);
-    /// let c = Cell::new(p.clone());
-    /// let p2 = c.get();
+    /// let c = Cell::new(Rc::downgrade(&p));
+    /// let p2 = c.get().upgrade().unwrap();
     /// assert_eq!(*p, *p2);
     /// assert_eq!(p, p2);
-    /// assert_eq!(Rc::strong_count(&p), 3);
-    /// assert_eq!(Rc::strong_count(&p2), 3);
+    /// assert_eq!(Rc::strong_count(&p), 2);
+    /// assert_eq!(Rc::strong_count(&p2), 2);
     /// ```
     #[inline]
     pub fn get(&self) -> T
@@ -228,11 +229,12 @@ where
     /// # Examples
     ///
     /// ```
+    /// use std::rc::Rc;
     /// use clone_cell::cell::Cell;
     ///
-    /// let i = &mut 42;
-    /// let c = Cell::from_mut(i);
-    /// assert_eq!(c.get(), 42);
+    /// let p = &mut Rc::new(42);
+    /// let c = Cell::from_mut(p);
+    /// assert_eq!(*c.get(), 42);
     /// ```
     pub fn from_mut(t: &mut T) -> &Cell<T> {
         // SAFETY: `&mut` is unique.
@@ -246,12 +248,16 @@ impl<T> Cell<[T]> {
     /// # Examples
     ///
     /// ```
+    /// use std::rc::Rc;
     /// use clone_cell::cell::Cell;
     ///
-    /// let s: &mut [i32] = &mut [0, 1, 2];
-    /// let cs: &Cell<[i32]> = Cell::from_mut(s);
-    /// let sc: &[Cell<i32>] = cs.as_slice_of_cells();
+    /// let s: &mut [Rc<i32>] = &mut [Rc::new(0), Rc::new(1), Rc::new(2)];
+    /// let cs: &Cell<[Rc<i32>]> = Cell::from_mut(s);
+    /// let sc: &[Cell<Rc<i32>>] = cs.as_slice_of_cells();
     /// assert_eq!(sc.len(), 3);
+    /// assert_eq!(*sc[0].get(), 0);
+    /// assert_eq!(*sc[1].get(), 1);
+    /// assert_eq!(*sc[2].get(), 2);
     /// ```
     pub fn as_slice_of_cells(&self) -> &[Cell<T>] {
         // SAFETY: `Cell<T>` has the same memory layout as `T`.
