@@ -236,9 +236,10 @@ where
     /// let c = Cell::from_mut(p);
     /// assert_eq!(*c.get(), 42);
     /// ```
-    pub fn from_mut(t: &mut T) -> &Cell<T> {
+    #[inline]
+    pub fn from_mut(t: &mut T) -> &Self {
         // SAFETY: `&mut` is unique.
-        unsafe { &*(t as *mut T as *const Cell<T>) }
+        unsafe { &*(t as *mut T as *const Self) }
     }
 }
 
