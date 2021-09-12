@@ -45,27 +45,29 @@ See the documentation for [`Cell`] for more.
 
 - Similar to `std::cell::Cell`, this `Cell` is `!Sync`.
 - `PureClone` is currently only implemented for some types from the standard library. I hope to support user types as well with a proc macro so that one can automatically derive `PureClone` for types when they only contain fields that are `PureClone`:
-   ```rust
-   // Not supported yet!
-   #[derive(PureClone, Clone)]
-   struct Foo {
-       x: i32,
-   }
+    ```rust
+    // Not supported yet!
+    #[derive(PureClone, Clone)]
+    struct Foo {
+        x: i32,
+    }
 
-   let f = Cell::new(Foo { x: 0 });
-   f.set(Foo { x: 42 });
+    let f = Cell::new(Foo { x: 0 });
+    f.set(Foo { x: 42 });
 
-   assert_eq!(f.get().x, 42);
-   ```
+    assert_eq!(f.get().x, 42);
+    ```
 
-## Safety
+## Soundness
 
 I believe this is sound, because `PureClone` is unsafe to implement. This trait is implemented for:
 - `Copy` types;
 - Types that perform a shallow clone such as `Rc` and `Weak`; and
 - Types whose `clone` methods are otherwise known to be safe, such as compound types that only contain `PureClone` types.
 
-Please let me know if you find any soundness issues!
+See the [documentation] for more information. Please let me know if you find any soundness issues!
+
+[documentation]: https://docs.rs/clone_cell/latest/clone_cell/
 
 ## Contributing
 
