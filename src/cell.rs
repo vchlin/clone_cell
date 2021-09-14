@@ -14,7 +14,13 @@
 //!
 //! [`PureClone`]: crate::clone::PureClone
 
-use core::{cell::UnsafeCell, mem, ptr};
+use core::{
+    cell::UnsafeCell,
+    cmp::Ordering,
+    fmt,
+    fmt::{Debug, Formatter},
+    mem, ptr,
+};
 
 use crate::clone::PureClone;
 
@@ -267,3 +273,90 @@ impl<T> Cell<[T]> {
 }
 
 // TODO: Implement CoerceUnsized
+
+impl<T> Clone for Cell<T>
+where
+    T: PureClone,
+{
+    #[inline]
+    fn clone(&self) -> Self {
+        Self::new(self.get())
+    }
+}
+
+impl<T> Debug for Cell<T>
+where
+    T: Debug + PureClone,
+{
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        f.debug_struct("Cell").field("value", &self.get()).finish()
+    }
+}
+
+impl<T> Default for Cell<T>
+where
+    T: Default,
+{
+    #[inline]
+    fn default() -> Self {
+        Self::new(Default::default())
+    }
+}
+
+impl<T> From<T> for Cell<T> {
+    fn from(t: T) -> Self {
+        Cell::new(t)
+    }
+}
+
+impl<T> PartialEq for Cell<T>
+where
+    T: PartialEq + PureClone,
+{
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        self.get() == other.get()
+    }
+}
+
+impl<T> Eq for Cell<T> where T: Eq + PureClone {}
+
+impl<T> PartialOrd for Cell<T>
+where
+    T: PartialOrd + PureClone,
+{
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.get().partial_cmp(&other.get())
+    }
+
+    #[inline]
+    fn lt(&self, other: &Self) -> bool {
+        self.get() < other.get()
+    }
+
+    #[inline]
+    fn le(&self, other: &Self) -> bool {
+        self.get() <= other.get()
+    }
+
+    #[inline]
+    fn gt(&self, other: &Self) -> bool {
+        self.get() > other.get()
+    }
+
+    #[inline]
+    fn ge(&self, other: &Self) -> bool {
+        self.get() >= other.get()
+    }
+}
+
+impl<T> Ord for Cell<T>
+where
+    T: Ord + PureClone,
+{
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.get().cmp(&other.get())
+    }
+}
