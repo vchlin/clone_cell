@@ -67,7 +67,7 @@ I believe this is sound, because `PureClone` is unsafe to implement. This trait 
 
 See the [documentation] for more information. Please let me know if you find any soundness issues!
 
-[documentation]: https://docs.rs/clone_cell/latest/clone_cell/
+[documentation]: https://docs.rs/clone_cell/
 
 ## Contributing
 
