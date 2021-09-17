@@ -59,10 +59,7 @@ fn cycle() {
             let this = Rc::new(Self {
                 observable: Cell::new(observable),
             });
-            this.observable
-                .get()
-                .observer
-                .set(Rc::downgrade(&this));
+            this.observable.get().observer.set(Rc::downgrade(&this));
             this
         }
 
@@ -87,11 +84,7 @@ fn cycle() {
         }
 
         fn call_observer(&self) {
-            self.observer
-                .get()
-                .upgrade()
-                .unwrap()
-                .do_something();
+            self.observer.get().upgrade().unwrap().do_something();
         }
     }
 

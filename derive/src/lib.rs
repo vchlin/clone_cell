@@ -55,7 +55,11 @@ fn impl_clone<'a>(
     name: &Ident,
     fields: impl Iterator<Item = (&'a Ident, &'a Type)>,
 ) -> TokenStream {
-    let fields = fields.map(|(ident, _)| quote! { #ident: self.#ident });
+    let fields = fields.map(|(ident, _)| {
+        quote! {
+            #ident: core::clone::Clone::clone(&self.#ident)
+        }
+    });
     quote! {
         impl core::clone::Clone for #name {
             fn clone(&self) -> Self {
