@@ -1,7 +1,7 @@
 //! The `PureClone` trait, which is a subtrait of [`Clone`].
 
-//#[cfg(feature = "derive")]
-//pub use crate::derive::PureClone;
+#[cfg(feature = "derive")]
+pub use crate::derive::PureClone;
 
 /// A restrictive form of `Clone` that does not mutate the containing [`Cell`].
 ///

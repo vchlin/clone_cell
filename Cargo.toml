@@ -12,10 +12,15 @@ keywords = ["clone", "cell", "mutability"]
 
 [features]
 #default = ["derive"]
-#derive = ["clone_cell_derive"]
+derive = ["clone_cell_derive"]
 
 [dependencies]
-#clone_cell_derive = { version = "0.1.1", path = "derive", optional = true }
+clone_cell_derive = { version = "0.1.4", path = "derive", optional = true }
 
 [dev-dependencies]
 trybuild = "1.0.45"
+
+[workspace]
+members = [
+    "derive",
+]
