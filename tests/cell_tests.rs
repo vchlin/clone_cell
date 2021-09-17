@@ -62,7 +62,7 @@ fn cycle() {
             this.observable
                 .get()
                 .observer
-                .set(Some(Rc::downgrade(&this)));
+                .set(Rc::downgrade(&this));
             this
         }
 
@@ -76,20 +76,19 @@ fn cycle() {
     }
 
     struct Observable {
-        observer: Cell<Option<Weak<Observer>>>,
+        observer: Cell<Weak<Observer>>,
     }
 
     impl Observable {
         fn new() -> Rc<Self> {
             Rc::new(Self {
-                observer: Cell::new(None),
+                observer: Cell::new(Weak::new()),
             })
         }
 
         fn call_observer(&self) {
             self.observer
                 .get()
-                .unwrap()
                 .upgrade()
                 .unwrap()
                 .do_something();
