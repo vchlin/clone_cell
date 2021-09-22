@@ -59,10 +59,24 @@ fn inherent_clone_method() {
 }
 
 #[test]
-fn with_generics() {
+fn with_type_params() {
     // TODO: WIP
-    // #[derive(PureClone)]
-    // struct Foo<T> {
-    //     value: T,
-    // }
+    #[derive(PureClone)]
+    struct Foo<T> {
+        value: T,
+    }
+
+    #[derive(PureClone)]
+    struct Bar<T> {
+        value: Box<T>,
+    }
+}
+
+#[test]
+fn with_lifetimes() {
+    // TODO: Add another lifetime?
+    #[derive(PureClone)]
+    struct Foo<'a, T> {
+        a: &'a T,
+    }
 }

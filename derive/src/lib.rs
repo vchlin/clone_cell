@@ -1,74 +1,47 @@
 use proc_macro2::TokenStream;
-use quote::{format_ident, quote, quote_spanned};
-use syn::{parse_macro_input, spanned::Spanned, Data, DeriveInput, Ident, Path, Type};
+use quote::quote;
+use syn::parse_quote;
+use synstructure::{decl_derive, Structure, AddBounds};
 
-#[proc_macro_derive(PureClone)]
-pub fn derive_pure_clone(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let item = parse_macro_input!(item as DeriveInput);
-    expand_derive_pure_clone(&item).into()
-}
+decl_derive!([PureClone] => derive_pure_clone);
 
-fn lib_path() -> Path {
-    format_ident!("clone_cell").into()
-}
-
-fn expand_derive_pure_clone(item: &DeriveInput) -> TokenStream {
-    let name = &item.ident;
-
-    let fields = match &item.data {
-        Data::Struct(s) => s.fields.iter().map(|f| (f.ident.as_ref().unwrap(), &f.ty)),
-        _ => todo!(),
-    };
-
-    let asserts = fields.clone().map(|(ident, ty)| {
-        let ident = format_ident!("_Assert{}{}", name, ident);
-        let span = ty.span();
-        quote_spanned! {span=>
-            struct #ident where #ty: PureClone;
-        }
-    });
-
-    let pure_clone_impl = impl_pure_clone(name, fields);
-
-    quote! {
-        const _: () = {
-            #(#asserts)*
-
-            #pure_clone_impl
-        };
-    }
-}
-
-fn impl_pure_clone<'a>(
-    name: &Ident,
-    fields: impl Iterator<Item = (&'a Ident, &'a Type)>,
-) -> TokenStream {
-    // `Clone` must be implemented by us for it to be trusted.
-    let clone_impl = impl_clone(name, fields);
-    let lib = lib_path();
-    quote! {
-        #clone_impl
-
-        unsafe impl #lib::clone::PureClone for #name {}
-    }
-}
-
-fn impl_clone<'a>(
-    name: &Ident,
-    fields: impl Iterator<Item = (&'a Ident, &'a Type)>,
-) -> TokenStream {
-    let fields = fields.map(|(ident, _)| {
+fn derive_pure_clone(mut s: Structure) -> TokenStream {
+    s.underscore_const(true);
+    let body = s.each_variant(|v| {
+        let fields = v.ast().fields.iter().map(|f| {
+            // TODO: WIP
+            let ident = f.ident.as_ref().unwrap();
+            quote! { #ident: core::clone::Clone::clone(&self.#ident) }
+        });
         quote! {
-            #ident: core::clone::Clone::clone(&self.#ident)
+            Self { #(#fields),* }
         }
     });
-    quote! {
-        impl core::clone::Clone for #name {
+    s.add_bounds(AddBounds::Fields);
+    let clone_impl = s.gen_impl(quote! {
+        gen impl core::clone::Clone for @Self {
             fn clone(&self) -> Self {
-                Self {
-                    #(#fields),*
+                match *self {
+                    #body
                 }
             }
         }
+    });
+    s.add_bounds(AddBounds::None);
+    let tys: Vec<_> = s.variants().iter()
+        .flat_map(|v| v.ast().fields.iter().map(|f| f.ty.clone())).collect();
+    for ty in tys {
+        // TODO: Proper span
+        s.add_where_predicate(parse_quote! { #ty: clone_cell::clone::PureClone });
     }
+    let pure_clone_impl = s.gen_impl(quote! {
+        gen unsafe impl clone_cell::clone::PureClone for @Self {}
+    });
+    let output = quote! {
+        #clone_impl
+
+        #pure_clone_impl
+    };
+    //println!("{}", output.to_string());
+    output
 }

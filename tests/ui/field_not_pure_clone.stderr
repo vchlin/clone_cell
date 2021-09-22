@@ -1,7 +1,0 @@
-error[E0277]: the trait bound `Foo: PureClone` is not satisfied
- --> $DIR/field_not_pure_clone.rs:8:8
-  |
-8 |     f: Foo,
-  |        ^^^ the trait `PureClone` is not implemented for `Foo`
-  |
-  = help: see issue #48214

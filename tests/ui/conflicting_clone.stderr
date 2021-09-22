@@ -4,7 +4,7 @@ error[E0119]: conflicting implementations of trait `std::clone::Clone` for type 
 3 | #[derive(PureClone)]
   |          ^^^^^^^^^ conflicting implementation for `Foo`
 ...
-9 | impl Clone for Foo {
+6 | impl Clone for Foo {
   | ------------------ first implementation here
   |
   = note: this error originates in the derive macro `PureClone` (in Nightly builds, run with -Z macro-backtrace for more info)
