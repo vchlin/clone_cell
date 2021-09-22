@@ -31,9 +31,11 @@ fn expand_derive_pure_clone(item: &DeriveInput) -> TokenStream {
     let pure_clone_impl = impl_pure_clone(name, fields);
 
     quote! {
-        #(#asserts)*
+        const _: () = {
+            #(#asserts)*
 
-        #pure_clone_impl
+            #pure_clone_impl
+        };
     }
 }
 

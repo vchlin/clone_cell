@@ -1,8 +1,11 @@
-use clone_cell::{cell::Cell, clone::PureClone};
+use clone_cell::clone::PureClone;
+
+#[derive(Clone)]
+struct Foo;
 
 #[derive(PureClone)]
-struct Foo {
-    x: Cell<i32>,
+struct Bar {
+    f: Foo,
 }
 
 fn main() {}

@@ -57,3 +57,12 @@ fn inherent_clone_method() {
     }));
     assert_eq!(c.get().unwrap().f.data, 42);
 }
+
+#[test]
+fn with_generics() {
+    // TODO: WIP
+    // #[derive(PureClone)]
+    // struct Foo<T> {
+    //     value: T,
+    // }
+}
