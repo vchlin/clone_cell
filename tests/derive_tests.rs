@@ -60,7 +60,6 @@ fn inherent_clone_method() {
 
 #[test]
 fn with_type_params() {
-    // TODO: WIP
     #[derive(PureClone)]
     struct Foo<T> {
         value: T,
@@ -68,8 +67,10 @@ fn with_type_params() {
 
     #[derive(PureClone)]
     struct Bar<T> {
-        value: Box<T>,
+        value: Foo<T>,
     }
+
+    // TODO: WIP
 }
 
 #[test]
@@ -79,4 +80,24 @@ fn with_lifetimes() {
     struct Foo<'a, T> {
         a: &'a T,
     }
+
+    let i = 42;
+    let f = Foo { a: &i };
+    assert_eq!(f.clone().a, &i);
+    assert_eq!(*f.clone().a, i);
+}
+
+#[test]
+fn variant() {
+    #[derive(PureClone)]
+    struct Foo;
+
+    #[derive(PureClone)]
+    enum Bar<T> {
+        X,
+        Y(i32),
+        Z { x: usize, y: Box<T>, z: Foo },
+    }
+
+    // TODO: WIP
 }
