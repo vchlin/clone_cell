@@ -39,7 +39,7 @@ assert_eq!(*x.get(), 42);
 ```
 
 A proc macro is also provided to derive `PureClone` for user types safely.
-```
+```rust
 #[derive(PureClone)]
 struct Foo {
     x: i32,
