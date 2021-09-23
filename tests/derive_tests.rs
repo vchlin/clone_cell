@@ -86,6 +86,13 @@ fn type_params() {
     assert_eq!(baz.pure_clone().bar.t, 42);
 }
 
+// FIXME: Recursive types fail to compile.
+// #[test]
+// fn recursive() {
+//     #[derive(PureClone)]
+//     struct Foo(Box<Foo>);
+// }
+
 #[test]
 fn lifetimes() {
     // TODO: Add another lifetime?
