@@ -76,7 +76,11 @@ fn type_params() {
     }
 
     let bar = Bar { t: 42 };
-    let baz = Baz { t: Rc::new(Foo), foo: Rc::new(Foo), bar };
+    let baz = Baz {
+        t: Rc::new(Foo),
+        foo: Rc::new(Foo),
+        bar,
+    };
     assert_eq!(*baz.pure_clone().t, Foo);
     assert_eq!(*baz.pure_clone().foo, Foo);
     assert_eq!(baz.pure_clone().bar.t, 42);
@@ -108,7 +112,11 @@ fn variant() {
         Z { x: (usize,), y: Box<T>, z: Foo },
     }
 
-    let b = Bar::Z { x: (42,), y: Box::new('y'), z: Foo };
+    let b = Bar::Z {
+        x: (42,),
+        y: Box::new('y'),
+        z: Foo,
+    };
     let b2 = b.pure_clone();
     assert_eq!(b, b2);
 }

@@ -18,6 +18,7 @@ structures.
 
 `PureClone` is currently implemented for the following types:
 - All primitives such as `i32`, `usize`, `f64`, etc;
+- References: `&T`;
 - `Rc<T>` and `Weak<T>`;
 - `Option<T: PureClone>`; and
 - Tuples: `(A: PureClone, ...)`.

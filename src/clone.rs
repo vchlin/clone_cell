@@ -23,7 +23,9 @@ pub use crate::derive::PureClone;
 /// https://stackoverflow.com/questions/39667868/why-can-cell-in-rust-only-be-used-for-copy-and-not-clone-types
 pub unsafe trait PureClone: Clone {
     #[inline]
-    fn pure_clone(&self) -> Self { Clone::clone(self) }
+    fn pure_clone(&self) -> Self {
+        Clone::clone(self)
+    }
 }
 
 /// Implementations for types that are known to have compliant `clone` implementations.
@@ -31,8 +33,6 @@ mod impls {
     use std::rc::{Rc, Weak};
 
     use super::PureClone;
-
-    unsafe impl<T> PureClone for &T {}
 
     macro_rules! impl_pure_clone {
         ($($t:ty)*) => {
@@ -43,9 +43,9 @@ mod impls {
     }
 
     macro_rules! impl_pure_clone_rc {
-        ($($i:ident<$j:ident>)*) => {
+        ($($i:ident<T>)*) => {
             $(
-                unsafe impl<T> PureClone for $i<T> {}
+                unsafe impl<T> PureClone for $i<T> where T: ?Sized {}
             )*
         }
     }
@@ -65,6 +65,8 @@ mod impls {
             )*
         }
     }
+
+    unsafe impl<T> PureClone for &T where T: ?Sized {}
 
     impl_pure_clone! {
         usize u8 u16 u32 u64 u128
