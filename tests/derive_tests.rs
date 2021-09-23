@@ -67,10 +67,12 @@ fn with_type_params() {
 
     #[derive(PureClone)]
     struct Bar<T> {
-        value: Foo<T>,
+        f: Foo<T>,
     }
 
-    // TODO: WIP
+    let f = Foo { value: 42 };
+    let b = Bar { f };
+    assert_eq!(b.clone().f.value, 42);
 }
 
 #[test]
@@ -89,15 +91,17 @@ fn with_lifetimes() {
 
 #[test]
 fn variant() {
-    #[derive(PureClone)]
+    #[derive(Debug, PartialEq, PureClone)]
     struct Foo;
 
-    #[derive(PureClone)]
+    #[derive(Debug, PartialEq, PureClone)]
     enum Bar<T> {
-        X,
-        Y(i32),
-        Z { x: usize, y: Box<T>, z: Foo },
+        _X,
+        _Y(i32),
+        Z { x: (usize,), y: Box<T>, z: Foo },
     }
 
-    // TODO: WIP
+    let b = Bar::Z { x: (42,), y: Box::new('y'), z: Foo };
+    let b2 = b.clone();
+    assert_eq!(b, b2);
 }
