@@ -35,7 +35,7 @@
 //! I believe this is sound, because `PureClone` is unsafe to implement. In user
 //! code, the only ways to use `PureClone` without `unsafe` are:
 //! 1. Use types that already implement `PureClone`.
-//! 2. (WIP) Use the provided proc macro to derive `PureClone` for user types, which
+//! 2. Use the provided proc macro to derive `PureClone` for user types, which
 //! ensures:
 //!     - Each field/variant of a given user `struct`/`enum` is also
 //!     `PureClone`.

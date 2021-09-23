@@ -168,7 +168,7 @@ impl<T> Cell<T> {
         T: PureClone,
     {
         // SAFETY: Only safe because `Cell` is `!Sync`.
-        unsafe { (*self.value.get()).clone() }
+        unsafe { (*self.value.get()).pure_clone() }
     }
 
     // TODO:

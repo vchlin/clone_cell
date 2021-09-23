@@ -59,24 +59,31 @@ fn inherent_clone_method() {
 }
 
 #[test]
-fn with_type_params() {
-    #[derive(PureClone)]
-    struct Foo<T> {
-        value: T,
-    }
+fn type_params() {
+    #[derive(Debug, PartialEq)]
+    struct Foo;
 
     #[derive(PureClone)]
     struct Bar<T> {
-        f: Foo<T>,
+        t: T,
     }
 
-    let f = Foo { value: 42 };
-    let b = Bar { f };
-    assert_eq!(b.clone().f.value, 42);
+    #[derive(PureClone)]
+    struct Baz<T, U> {
+        t: Rc<T>,
+        foo: Rc<Foo>,
+        bar: Bar<U>,
+    }
+
+    let bar = Bar { t: 42 };
+    let baz = Baz { t: Rc::new(Foo), foo: Rc::new(Foo), bar };
+    assert_eq!(*baz.pure_clone().t, Foo);
+    assert_eq!(*baz.pure_clone().foo, Foo);
+    assert_eq!(baz.pure_clone().bar.t, 42);
 }
 
 #[test]
-fn with_lifetimes() {
+fn lifetimes() {
     // TODO: Add another lifetime?
     #[derive(PureClone)]
     struct Foo<'a, T> {
@@ -85,8 +92,8 @@ fn with_lifetimes() {
 
     let i = 42;
     let f = Foo { a: &i };
-    assert_eq!(f.clone().a, &i);
-    assert_eq!(*f.clone().a, i);
+    assert_eq!(f.pure_clone().a, &i);
+    assert_eq!(*f.pure_clone().a, i);
 }
 
 #[test]
@@ -102,6 +109,6 @@ fn variant() {
     }
 
     let b = Bar::Z { x: (42,), y: Box::new('y'), z: Foo };
-    let b2 = b.clone();
+    let b2 = b.pure_clone();
     assert_eq!(b, b2);
 }

@@ -21,13 +21,18 @@ pub use crate::derive::PureClone;
 /// https://users.rust-lang.org/t/why-does-cell-require-copy-instead-of-clone/5769/3
 /// [Stack Overflow answer]:
 /// https://stackoverflow.com/questions/39667868/why-can-cell-in-rust-only-be-used-for-copy-and-not-clone-types
-pub unsafe trait PureClone: Clone {}
+pub unsafe trait PureClone: Clone {
+    #[inline]
+    fn pure_clone(&self) -> Self { Clone::clone(self) }
+}
 
 /// Implementations for types that are known to have compliant `clone` implementations.
 mod impls {
     use std::rc::{Rc, Weak};
 
     use super::PureClone;
+
+    unsafe impl<T> PureClone for &T {}
 
     macro_rules! impl_pure_clone {
         ($($t:ty)*) => {
@@ -76,6 +81,7 @@ mod impls {
         Box<T>
         Option<T>
         Result<T, E>
+        Vec<T>
     }
 
     impl_pure_clone_tuples! {

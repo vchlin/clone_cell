@@ -49,6 +49,11 @@ fn pure_clone_tuple() {
 }
 
 #[test]
+fn bad_drop() {
+    // TODO: WIP
+}
+
+#[test]
 fn cycle() {
     struct Observer {
         observable: Cell<Rc<Observable>>,

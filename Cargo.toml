@@ -1,6 +1,6 @@
 [package]
 name = "clone_cell"
-version = "0.1.4"
+version = "0.2.0"
 edition = "2018"
 authors = ["Vektorlynk"]
 license = "MIT OR Apache-2.0"
@@ -15,7 +15,7 @@ keywords = ["clone", "cell", "mutability"]
 derive = ["clone_cell_derive"]
 
 [dependencies]
-clone_cell_derive = { version = "0.1.4", path = "derive", optional = true }
+clone_cell_derive = { version = "0.2.0", path = "derive", optional = true }
 
 [dev-dependencies]
 trybuild = "1.0.45"

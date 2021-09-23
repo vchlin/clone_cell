@@ -37,6 +37,19 @@ x.set(Rc::new(42));
 assert_eq!(*x.get(), 42);
 ```
 
+A proc macro is also provided to derive `PureClone` for user types safely.
+```
+#[derive(PureClone)]
+struct Foo {
+    x: i32,
+}
+
+let f = Cell::new(Foo { x: 0 });
+f.set(Foo { x: 42 });
+
+assert_eq!(f.get().x, 42);
+```
+
 See the documentation for [`Cell`] for more.
 
 [`Cell`]: https://docs.rs/clone_cell/latest/clone_cell/cell/struct.Cell.html
@@ -44,19 +57,7 @@ See the documentation for [`Cell`] for more.
 ## Limitations
 
 - Similar to `std::cell::Cell`, this `Cell` is `!Sync`.
-- `PureClone` is currently only implemented for some types from the standard library. I hope to support user types as well with a proc macro so that one can automatically derive `PureClone` for types when they only contain fields that are `PureClone`:
-    ```rust
-    // Not supported yet!
-    #[derive(PureClone, Clone)]
-    struct Foo {
-        x: i32,
-    }
-
-    let f = Cell::new(Foo { x: 0 });
-    f.set(Foo { x: 42 });
-
-    assert_eq!(f.get().x, 42);
-    ```
+- Since a new trait `PureClone` is used, there is no out-of-box support for types from third-party crates.
 
 ## Soundness
 
