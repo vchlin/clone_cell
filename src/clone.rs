@@ -1,5 +1,8 @@
 //! The `PureClone` trait, which is a subtrait of [`Clone`].
 
+/// A derive macro that generates impls of the traits [`PureClone`] and [`Clone`].
+///
+/// See the [crate#soundness] doc on why this macro also generates a `Clone` impl.
 #[cfg(feature = "derive")]
 pub use crate::derive::PureClone;
 

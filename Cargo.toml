@@ -11,7 +11,7 @@ readme = "README.md"
 keywords = ["clone", "cell", "mutability"]
 
 [features]
-#default = ["derive"]
+default = ["derive"]
 derive = ["clone_cell_derive"]
 
 [dependencies]
