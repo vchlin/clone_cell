@@ -58,7 +58,7 @@ See the documentation for [`Cell`] for more.
 ## Limitations
 
 - Similar to `std::cell::Cell`, this `Cell` is `!Sync`.
-- Since a new trait `PureClone` is used, there is no out-of-box support for types from third-party crates.
+- Since a new trait `PureClone` is used, there is no out-of-the-box support for types from third-party crates.
 
 ## Soundness
 

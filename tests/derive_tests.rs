@@ -86,12 +86,15 @@ fn type_params() {
     assert_eq!(baz.pure_clone().bar.t, 42);
 }
 
-// FIXME: Recursive types fail to compile.
-// #[test]
-// fn recursive() {
-//     #[derive(PureClone)]
-//     struct Foo(Box<Foo>);
-// }
+#[test]
+fn recursive() {
+    // `Option<T>` and `Box<T>` are `PureClone` only if `T` is. So this is a recursive case.
+    #[derive(Debug, PartialEq, PureClone)]
+    struct Foo(Option<Box<Self>>);
+
+    let f = Foo(None);
+    assert_eq!(f.clone(), Foo(None));
+}
 
 #[test]
 fn lifetimes() {
