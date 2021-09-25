@@ -39,7 +39,7 @@ fn inherent_clone_method() {
         // https://users.rust-lang.org/t/why-does-cell-require-copy-instead-of-clone/5769/9
         #[allow(dead_code)]
         fn clone(&self) -> Self {
-            // Clear out the cell we're contained in...
+            // Clears out the cell we're contained in...
             self.ptr.set(None);
             Self {
                 data: self.data,

@@ -16,9 +16,9 @@ fn derive_pure_clone(mut s: Structure) -> TokenStream {
             quote! { core::clone::Clone::clone(#b) }
         })
     });
-    // XXX: Asserts are used instead of adding additional `where` clauses on the `PureClone` impl
-    // below. This is because `where` clauses that contain the `Self` type can easily lead to
-    // overflowing evaluating trait requirements.
+    // Asserts are used instead of adding additional `where` clauses on the `PureClone` impl
+    // below. This is because `where` clauses that contain the `Self` type can lead to overflowing
+    // evaluating trait requirements in the recursive cases.
     let asserts = s.variants().iter().flat_map(|v| {
         v.ast().fields.iter().map(|f| {
             let ty = &f.ty;

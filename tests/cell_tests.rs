@@ -50,7 +50,21 @@ fn pure_clone_tuple() {
 
 #[test]
 fn bad_drop() {
-    // TODO: WIP
+    struct Foo {
+        ptr: Rc<Cell<Option<Foo>>>,
+    }
+
+    impl Drop for Foo {
+        fn drop(&mut self) {
+            // Triggers `drop` again...
+            self.ptr.set(None);
+        }
+    }
+
+    let c = Rc::new(Cell::new(None));
+    c.set(Some(Foo { ptr: c.clone() }));
+    c.set(None);
+    assert_eq!(c.take().is_none(), true);
 }
 
 #[test]
@@ -68,7 +82,7 @@ fn cycle() {
             this
         }
 
-        fn call_observable(&self) {
+        fn poke_observable(&self) {
             self.observable.get().call_observer();
         }
 
@@ -94,7 +108,8 @@ fn cycle() {
     }
 
     let observable = Observable::new();
+    let weak_observable = Rc::downgrade(&observable);
     let observer = Observer::new(observable);
-    observer.call_observable();
-    // TODO: Assertions
+    observer.poke_observable();
+    assert_eq!(weak_observable.upgrade().is_none(), true);
 }
