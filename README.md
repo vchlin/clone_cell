@@ -52,7 +52,7 @@ f.set(Foo { x: 42 });
 assert_eq!(f.get().x, 42);
 ```
 
-See the `clone` module documentation for more information.
+See the [`clone`] module documentation for more information.
 
 [`Cell`]: https://docs.rs/clone_cell/latest/clone_cell/cell/struct.Cell.html
 [`clone`]: https://docs.rs/clone_cell/latest/clone_cell/clone/index.html
