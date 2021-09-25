@@ -1,7 +1,11 @@
-error[E0277]: the trait bound `clone_cell::cell::Cell<i32>: PureClone` is not satisfied
- --> $DIR/field_not_pure_clone.rs:6:8
-  |
-6 |     x: Cell<i32>,
-  |        ^^^^ the trait `PureClone` is not implemented for `clone_cell::cell::Cell<i32>`
-  |
-  = help: see issue #48214
+error[E0277]: the trait bound `Foo: PureClone` is not satisfied
+  --> $DIR/field_not_pure_clone.rs:8:8
+   |
+8  |     f: Foo,
+   |        ^^^ the trait `PureClone` is not implemented for `Foo`
+   |
+note: required by `pure_clone`
+  --> $DIR/clone.rs:37:5
+   |
+37 |     fn pure_clone(&self) -> Self {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

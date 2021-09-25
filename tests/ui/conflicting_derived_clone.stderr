@@ -1,0 +1,19 @@
+error[E0119]: conflicting implementations of trait `std::clone::Clone` for type `Foo`
+ --> $DIR/conflicting_derived_clone.rs:4:21
+  |
+4 | #[derive(PureClone, Clone)]
+  |          ---------  ^^^^^ conflicting implementation for `Foo`
+  |          |
+  |          first implementation here
+  |
+  = note: this error originates in the derive macro `Clone` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0119]: conflicting implementations of trait `std::clone::Clone` for type `Bar`
+ --> $DIR/conflicting_derived_clone.rs:7:17
+  |
+7 | #[derive(Clone, PureClone)]
+  |          -----  ^^^^^^^^^ conflicting implementation for `Bar`
+  |          |
+  |          first implementation here
+  |
+  = note: this error originates in the derive macro `PureClone` (in Nightly builds, run with -Z macro-backtrace for more info)

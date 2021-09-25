@@ -49,6 +49,25 @@ fn pure_clone_tuple() {
 }
 
 #[test]
+fn bad_drop() {
+    struct Foo {
+        ptr: Rc<Cell<Option<Foo>>>,
+    }
+
+    impl Drop for Foo {
+        fn drop(&mut self) {
+            // Triggers `drop` again...
+            self.ptr.set(None);
+        }
+    }
+
+    let c = Rc::new(Cell::new(None));
+    c.set(Some(Foo { ptr: c.clone() }));
+    c.set(None);
+    assert_eq!(c.take().is_none(), true);
+}
+
+#[test]
 fn cycle() {
     struct Observer {
         observable: Cell<Rc<Observable>>,
@@ -59,14 +78,11 @@ fn cycle() {
             let this = Rc::new(Self {
                 observable: Cell::new(observable),
             });
-            this.observable
-                .get()
-                .observer
-                .set(Some(Rc::downgrade(&this)));
+            this.observable.get().observer.set(Rc::downgrade(&this));
             this
         }
 
-        fn call_observable(&self) {
+        fn poke_observable(&self) {
             self.observable.get().call_observer();
         }
 
@@ -76,28 +92,24 @@ fn cycle() {
     }
 
     struct Observable {
-        observer: Cell<Option<Weak<Observer>>>,
+        observer: Cell<Weak<Observer>>,
     }
 
     impl Observable {
         fn new() -> Rc<Self> {
             Rc::new(Self {
-                observer: Cell::new(None),
+                observer: Cell::new(Weak::new()),
             })
         }
 
         fn call_observer(&self) {
-            self.observer
-                .get()
-                .unwrap()
-                .upgrade()
-                .unwrap()
-                .do_something();
+            self.observer.get().upgrade().unwrap().do_something();
         }
     }
 
     let observable = Observable::new();
+    let weak_observable = Rc::downgrade(&observable);
     let observer = Observer::new(observable);
-    observer.call_observable();
-    // TODO: Assertions
+    observer.poke_observable();
+    assert_eq!(weak_observable.upgrade().is_none(), true);
 }

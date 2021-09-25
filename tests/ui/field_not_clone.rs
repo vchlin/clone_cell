@@ -1,8 +1,10 @@
 use clone_cell::clone::PureClone;
 
+struct Foo;
+
 #[derive(PureClone)]
-struct Foo {
-    x: i32,
+struct Bar {
+    f: Foo,
 }
 
 fn main() {}

@@ -1,22 +1,50 @@
-use proc_macro::TokenStream;
-use quote::{format_ident, quote};
-use syn::{parse_macro_input, DeriveInput, Error, Path};
+use proc_macro2::TokenStream;
+use quote::{quote, quote_spanned};
+use syn::spanned::Spanned;
+use synstructure::{decl_derive, AddBounds, Structure};
 
-mod clone;
+decl_derive!([PureClone] => derive_pure_clone);
 
-#[proc_macro_derive(PureClone)]
-pub fn derive_pure_clone(item: TokenStream) -> TokenStream {
-    let item = parse_macro_input!(item as DeriveInput);
-    clone::expand_derive_pure_clone(&item)
-        .unwrap_or_else(to_compile_errors)
-        .into()
-}
+fn derive_pure_clone(mut s: Structure) -> TokenStream {
+    s.underscore_const(true);
+    s.add_bounds(AddBounds::Fields);
+    let body = s.each_variant(|v| {
+        let bindings = v.bindings();
+        v.construct(|_, i| {
+            let b = &bindings[i];
+            // TODO: Proper span
+            quote! { core::clone::Clone::clone(#b) }
+        })
+    });
+    // Asserts are used instead of adding additional `where` clauses on the `PureClone` impl
+    // below. This is because `where` clauses that contain the `Self` type can lead to overflowing
+    // evaluating trait requirements in the recursive cases.
+    let asserts = s.variants().iter().flat_map(|v| {
+        v.ast().fields.iter().map(|f| {
+            let ty = &f.ty;
+            let span = ty.span();
+            quote_spanned! {span=>
+                let _ = <#ty as clone_cell::clone::PureClone>::pure_clone;
+            }
+        })
+    });
+    let output = s.gen_impl(quote! {
+        gen impl core::clone::Clone for @Self {
+            fn clone(&self) -> Self {
+                match *self {
+                    #body
+                }
+            }
+        }
 
-fn to_compile_errors(errs: Vec<Error>) -> proc_macro2::TokenStream {
-    let errs = errs.iter().map(Error::to_compile_error);
-    quote!(#(#errs)*)
-}
+        gen unsafe impl clone_cell::clone::PureClone for @Self {
+            #[inline]
+            fn pure_clone(&self) -> Self {
+                #(#asserts)*
 
-fn lib_path() -> Path {
-    format_ident!("clone_cell").into()
+                core::clone::Clone::clone(self)
+            }
+        }
+    });
+    output
 }
