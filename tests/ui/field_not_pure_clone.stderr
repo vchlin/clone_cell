@@ -5,7 +5,7 @@ error[E0277]: the trait bound `Foo: PureClone` is not satisfied
    |        ^^^ the trait `PureClone` is not implemented for `Foo`
    |
 note: required by `pure_clone`
-  --> $DIR/clone.rs:29:5
+  --> $DIR/clone.rs:37:5
    |
-29 |     fn pure_clone(&self) -> Self {
+37 |     fn pure_clone(&self) -> Self {
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,20 +1,18 @@
 # clone_cell
 
-clone_cell provides a `Cell` implementation that works with types whose `Clone`
-implementations are guaranteed not to mutate the `Cell` content through the `&self`
-reference. This is enforced with the provided `PureClone` trait, which is a subtrait
-of `Clone` (and a logical supertrait of `Copy`). It is only implemented for types
-with compliant `clone` methods.
+clone_cell provides a `Cell` implementation that works with types whose `Clone` implementations are
+guaranteed not to mutate the `Cell` content through the `&self` reference. This is enforced with the
+provided `PureClone` trait, which is a subtrait of `Clone` (and a logical supertrait of `Copy`). It
+is only implemented for types with compliant `clone` methods.
 
 ## Overview
 
-The `Cell` implementation provided by this crate is intended to be a drop-in
-replacement of `std::cell::Cell`. It can work with types that behave like *values*,
-such as `Rc<T>`, `Weak<T>` (shared pointers themselves are like *values*; it is the
-pointees that behave like *references*), `Option<T: PureClone>`, and more. Some
-motivating use cases include implementing the observer pattern and combining `Cell`
-with clone-on-write or immutable collections to enable efficient sharing of data
-structures.
+The `Cell` implementation provided by this crate is intended to be a drop-in replacement of
+`std::cell::Cell`. It can work with types that behave like *values*, such as `Rc<T>`, `Weak<T>`
+(shared pointers themselves are like *values*; it is the pointees that behave like *references*),
+`Option<T: PureClone>`, and more. Some motivating use cases include implementing the observer
+pattern and combining `Cell` with clone-on-write or immutable collections to enable efficient
+sharing of data structures.
 
 `PureClone` is currently implemented for the following types:
 - All primitives such as `i32`, `usize`, `f64`, etc;
@@ -38,6 +36,8 @@ x.set(Rc::new(42));
 assert_eq!(*x.get(), 42);
 ```
 
+See the documentation for [`Cell`] for more.
+
 A proc macro is also provided to derive `PureClone` for user types safely.
 ```rust
 // Note: This also generates a `Clone` impl.
@@ -52,9 +52,10 @@ f.set(Foo { x: 42 });
 assert_eq!(f.get().x, 42);
 ```
 
-See the documentation for [`Cell`] for more.
+See the `clone` module documentation for more information.
 
 [`Cell`]: https://docs.rs/clone_cell/latest/clone_cell/cell/struct.Cell.html
+[`clone`]: https://docs.rs/clone_cell/latest/clone_cell/clone/index.html
 
 ## Limitations
 
