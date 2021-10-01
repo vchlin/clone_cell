@@ -24,6 +24,38 @@
 /// A derive macro that generates impls of the traits [`PureClone`] and [`Clone`].
 ///
 /// See the [crate#soundness] doc on why this macro also generates a `Clone` impl.
+///
+/// # Examples
+///
+/// ```
+/// use std::rc::Rc;
+/// use clone_cell::{cell::Cell, clone::PureClone};
+///
+/// // Note: This also generates a `Clone` impl.
+/// #[derive(PureClone)]
+/// struct Foo<T> {
+///     p: Rc<T>, // `Rc<T>` is always `PureClone`.
+///     t: Option<T>, // `Option<T>` is `PureClone` if `T` is.
+///     x: i32, // `i32` is `PureClone`.
+/// }
+///
+/// let p = Rc::new(-42);
+/// let f = Cell::new(Foo {
+///     p: p.clone(),
+///     t: Some(0),
+///     x: 0,
+/// });
+///
+/// f.set(Foo {
+///     p,
+///     t: Some(42),
+///     x: 21,
+/// });
+///
+/// assert_eq!(*f.get().p, -42);
+/// assert_eq!(f.get().t, Some(42));
+/// assert_eq!(f.get().x, 21);
+/// ```
 #[cfg(feature = "derive")]
 pub use crate::derive::PureClone;
 
@@ -33,6 +65,7 @@ pub use crate::derive::PureClone;
 ///
 /// [module]: self
 pub unsafe trait PureClone: Clone {
+    /// The `pure_clone` method.
     #[inline]
     fn pure_clone(&self) -> Self {
         Clone::clone(self)
@@ -41,7 +74,11 @@ pub unsafe trait PureClone: Clone {
 
 /// Implementations for types that are known to have compliant `clone` implementations.
 mod impls {
-    use std::rc::{Rc, Weak};
+    use alloc::{
+        boxed::Box,
+        rc::{Rc, Weak},
+        vec::Vec,
+    };
 
     use super::PureClone;
 

@@ -29,6 +29,9 @@ See [`PureClone`] for a complete list.
 
 In this example below, we store an `Rc<T>` in a `Cell` and later retrieve a copy of it.
 ```rust
+use std::rc::Rc;
+use clone_cell::cell::Cell;
+
 let x = Cell::new(Rc::new(0));
 
 x.set(Rc::new(42));
@@ -40,16 +43,33 @@ See the documentation for [`Cell`] for more.
 
 A proc macro is also provided to derive `PureClone` for user types safely.
 ```rust
+use std::rc::Rc;
+use clone_cell::{cell::Cell, clone::PureClone};
+
 // Note: This also generates a `Clone` impl.
 #[derive(PureClone)]
-struct Foo {
-    x: i32,
+struct Foo<T> {
+    p: Rc<T>, // `Rc<T>` is always `PureClone`.
+    t: Option<T>, // `Option<T>` is `PureClone` if `T` is.
+    x: i32, // `i32` is `PureClone`.
 }
 
-let f = Cell::new(Foo { x: 0 });
-f.set(Foo { x: 42 });
+let p = Rc::new(-42);
+let f = Cell::new(Foo {
+    p: p.clone(),
+    t: Some(0),
+    x: 0,
+});
 
-assert_eq!(f.get().x, 42);
+f.set(Foo {
+    p,
+    t: Some(42),
+    x: 21,
+});
+
+assert_eq!(*f.get().p, -42);
+assert_eq!(f.get().t, Some(42));
+assert_eq!(f.get().x, 21);
 ```
 
 See the [`clone`] module documentation for more information.
