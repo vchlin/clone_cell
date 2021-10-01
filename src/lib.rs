@@ -61,7 +61,9 @@
 //! https://users.rust-lang.org/t/why-does-cell-require-copy-instead-of-clone/5769/3
 //! [RFC1210]: https://github.com/rust-lang/rfcs/blob/master/text/1210-impl-specialization.md
 
-// TODO: #![no_std]
+#![no_std]
+
+extern crate alloc;
 
 pub mod cell;
 pub mod clone;

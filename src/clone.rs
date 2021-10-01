@@ -33,6 +33,7 @@ pub use crate::derive::PureClone;
 ///
 /// [module]: self
 pub unsafe trait PureClone: Clone {
+    /// The `pure_clone` method.
     #[inline]
     fn pure_clone(&self) -> Self {
         Clone::clone(self)
@@ -41,7 +42,11 @@ pub unsafe trait PureClone: Clone {
 
 /// Implementations for types that are known to have compliant `clone` implementations.
 mod impls {
-    use std::rc::{Rc, Weak};
+    use alloc::{
+        boxed::Box,
+        rc::{Rc, Weak},
+        vec::Vec,
+    };
 
     use super::PureClone;
 
