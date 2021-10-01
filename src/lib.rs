@@ -15,10 +15,10 @@
 //! constructors are not defined by the user. Intead, the compiler automatically generates ones that
 //! simply perform a field-wise clone.
 //!
-//! In Rust, to enable interiorly mutating methods on a `struct` stored in an [`Rc`](std::rc::Rc)
-//! without the overhead of a [`RefCell`](std::cell::RefCell), we can wrap each of the fields in a
-//! [`std::cell::Cell`]. But its [`get`](std::cell::Cell::get) method is only implemented for types
-//! that are `Copy`. This is because if the `clone` method obtains a reference to the `Cell`'s
+//! In Rust, to enable interiorly mutating methods on a `struct` stored in an [`Rc`](alloc::rc::Rc)
+//! without the overhead of a [`RefCell`](core::cell::RefCell), we can wrap each of the fields in a
+//! [`core::cell::Cell`]. But its [`get`](core::cell::Cell::get) method is only implemented for
+//! types that are `Copy`. This is because if the `clone` method obtains a reference to the `Cell`'s
 //! interior, it may be able to mutate its state. This can cause undefined behavior, as demonstrated
 //! in this [example].
 //!
