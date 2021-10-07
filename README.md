@@ -82,12 +82,14 @@ See the [`clone`] module documentation for more information.
 - Similar to `std::cell::Cell`, this `Cell` is `!Sync`.
 - Since a new trait `PureClone` is used, there is no out-of-the-box support for types from third-party crates.
 
-## Soundness
+## Safety
 
-I believe this is sound, because `PureClone` is unsafe to implement. This trait is implemented for:
+This is safe to use, because `PureClone` is an `unsafe` trait, and all `PureClone` implementations
+are checked. This trait is implemented for:
 - `Copy` types;
 - Types that perform a shallow clone such as `Rc` and `Weak`; and
-- Types whose `clone` methods are otherwise known to be safe, such as compound types that only contain `PureClone` types.
+- Types whose `clone` methods are otherwise known to be safe, such as compound types that only
+  contain `PureClone` types.
 
 See the [documentation] for more information. Please let me know if you find any soundness issues!
 

@@ -1,23 +1,16 @@
 //! This crate provides a [`Cell`](cell::Cell) implementation that works with types whose `Clone`
 //! implementations are guaranteed not to mutate the `Cell` content using the `&self`
 //! reference. This is enforced with the provided [`PureClone`] trait, which is a subtrait of
-//! [`Clone`] (and a logical supertrait of [`Copy`]). It is only implemented for types with
-//! compliant `clone` methods.
+//! [`Clone`] (and a logical supertrait of [`Copy`]). It is only implemented for types with a
+//! compliant `clone` method.
 //!
 //! See the [`cell`](module@cell) module documentation for more information on how to use it.
 //!
 //! # Background
 //!
-//! This crate was largely inspired by the Swift programming language's class properties (fields in
-//! Rust speak), which have value semantics. In Swift, class types themselves have reference
-//! semantics and are shared. But methods on class types are mutating. My observation is that the
-//! Swift compiler is able to guarantee memory safety in a single-threaded context because copy
-//! constructors are not defined by the user. Intead, the compiler automatically generates ones that
-//! simply perform a field-wise clone.
-//!
-//! In Rust, to enable interiorly mutating methods on a `struct` stored in an [`Rc`](alloc::rc::Rc)
-//! without the overhead of a [`RefCell`](core::cell::RefCell), we can wrap each of the fields in a
-//! [`core::cell::Cell`]. But its [`get`](core::cell::Cell::get) method is only implemented for
+//! To enable interiorly mutating methods on a type stored in an [`Rc`](alloc::rc::Rc) without the
+//! overhead of a [`RefCell`](core::cell::RefCell), we can wrap each of its fields in a
+//! [`core::cell::Cell`]. But `Cell`'s [`get`](core::cell::Cell::get) method is only implemented for
 //! types that are `Copy`. This is because if the `clone` method obtains a reference to the `Cell`'s
 //! interior, it may be able to mutate its state. This can cause undefined behavior, as demonstrated
 //! in this [example].
@@ -43,8 +36,8 @@
 //! ## Interaction with specialization
 //!
 //! The [`PureClone`](derive@clone::PureClone) proc macro generates:
-//! 1. A non-`default` `Clone` impl with trait bounds that ensure any fields with generics are also
-//! `Clone`; and
+//! 1. A non-`default` `Clone` impl with trait bounds that ensure any fields with generic parameters
+//! are also `Clone`; and
 //! 1. A `PureClone` impl that only compiles if all fields are also `PureClone`.
 //!
 //! Item 1 is non-`default` and hence cannot be further specialized.
