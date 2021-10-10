@@ -2,17 +2,14 @@
 //!
 //! # When to use `Cell`
 //!
-//! [`Cell::get`] only requires `T` to be [`PureClone`]. This is useful when working
-//! with with shared `struct`s whose fields are of types `Rc<T>`, `Weak<T>`,
-//! `Option<T: PureClone>`, etc.
+//! [`Cell::get`] only requires `T` to be [`PureClone`](crate::clone::PureClone). This is useful
+//! when working with with shared `struct`s whose fields are of types `Rc<T>`, `Weak<T>`, `Option<T:
+//! PureClone>`, etc.
 //!
-//! Note that just because there can be any number of readers and writers to a
-//! [`Cell`] does not mean it is always a good pattern. In most cases, it may not
-//! make sense to have more than one writer at a time. But the user can easily build
-//! zero-cost abstractions on top of a `Cell` to enforce this. For example, this may be
-//! useful when implementing the observer pattern.
-//!
-//! [`PureClone`]: crate::clone::PureClone
+//! Note that just because there can be any number of readers and writers to a [`Cell`] does not
+//! mean it is always a good pattern. In most cases, it may not make sense to have more than one
+//! writer at a time. But the user can easily build zero-cost abstractions on top of a `Cell` to
+//! enforce this. For example, this may be useful when implementing the observer pattern.
 
 use core::{
     cell::UnsafeCell,
@@ -24,11 +21,8 @@ use core::{
 
 use crate::clone::PureClone;
 
-/// A mutable memory location with a [`get`] method that works with [`PureClone`]
-/// types.
-///
-/// [`PureClone`]: crate::clone::PureClone
-/// [`get`]: Cell::get
+/// A mutable memory location with a [`get`](Cell::get) method that works with
+/// [`PureClone`](crate::clone::PureClone) types.
 ///
 /// # Examples
 ///
@@ -86,8 +80,8 @@ impl<T> Cell<T> {
         drop(old);
     }
 
-    /// Swaps the values of two `Cell`s. Unlike `std::mem::swap`, this does not
-    /// require a `&mut` reference.
+    /// Swaps the values of two `Cell`s. Unlike `std::mem::swap`, this does not require a `&mut`
+    /// reference.
     ///
     /// # Examples
     ///
@@ -213,8 +207,8 @@ where
         self.value.get()
     }
 
-    /// Returns a mutable reference to the underlying data. This method requires
-    /// `&mut self`, ensuring the caller has the only reference to it.
+    /// Returns a mutable reference to the underlying data. This method requires `&mut self`,
+    /// ensuring the caller has the only reference to it.
     ///
     /// # Examples
     ///

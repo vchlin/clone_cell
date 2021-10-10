@@ -1,21 +1,19 @@
 //! Provides the [`PureClone`] trait, which is a restrictive form of `Clone` that does not mutate
-//! the containing [`Cell`].
+//! the containing [`Cell`](crate::cell::Cell).
 //!
-//! Conceptually, the relationship between [`Copy`], [`Clone`], and `PureClone` can be
-//! thought of as follows:
+//! Conceptually, the relationship between [`Copy`], [`Clone`], and `PureClone` can be thought of as
+//! follows:
 //! ```text
 //! Copy: PureClone: Clone
 //! ```
 //!
-//! `PureClone` is `unsafe` because the `clone` implementation must not mutate the
-//! content of `Cell` through the `&self` reference it gets with interior
-//! mutability. See this [Stack Overflow answer] and this [Rust forum thread] for
-//! details.
+//! `PureClone` is `unsafe` because the `clone` implementation must not mutate the content of `Cell`
+//! through the `&self` reference it gets with interior mutability. See this [Stack Overflow answer]
+//! and this [Rust forum thread] for details.
 //!
 //! When this [`crate`] is built with the `"derive"` feature, the [`PureClone`](derive@PureClone)
 //! proc macro can be used to derive `PureClone` for user types.
 //!
-//! [`Cell`]: crate::cell::Cell
 //! [Rust forum thread]:
 //! https://users.rust-lang.org/t/why-does-cell-require-copy-instead-of-clone/5769/3
 //! [Stack Overflow answer]:
@@ -61,9 +59,7 @@ pub use crate::derive::PureClone;
 
 /// The `PureClone` trait, which is a subtrait of [`Clone`].
 ///
-/// See the [module] documentation for more information.
-///
-/// [module]: self
+/// See the [module](self) documentation for more information.
 pub unsafe trait PureClone: Clone {
     /// The `pure_clone` method.
     #[inline]

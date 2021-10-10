@@ -1,9 +1,9 @@
 # clone_cell
 
-clone_cell provides a `Cell` implementation that works with types whose `Clone` implementations are
+clone_cell provides a `Cell` implementation that works with types whose `clone` methods are
 guaranteed not to mutate the `Cell` content through the `&self` reference. This is enforced with the
 provided `PureClone` trait, which is a subtrait of `Clone` (and a logical supertrait of `Copy`). It
-is only implemented for types with compliant `clone` methods.
+is only implemented for types with a compliant `clone` method.
 
 ## Overview
 
@@ -82,12 +82,14 @@ See the [`clone`] module documentation for more information.
 - Similar to `std::cell::Cell`, this `Cell` is `!Sync`.
 - Since a new trait `PureClone` is used, there is no out-of-the-box support for types from third-party crates.
 
-## Soundness
+## Safety
 
-I believe this is sound, because `PureClone` is unsafe to implement. This trait is implemented for:
+This is safe to use, because `PureClone` is an `unsafe` trait, and all `PureClone` implementations
+are checked. This trait is implemented for:
 - `Copy` types;
 - Types that perform a shallow clone such as `Rc` and `Weak`; and
-- Types whose `clone` methods are otherwise known to be safe, such as compound types that only contain `PureClone` types.
+- Types whose `clone` methods are otherwise known to be safe, such as compound types that only
+  contain `PureClone` types.
 
 See the [documentation] for more information. Please let me know if you find any soundness issues!
 
