@@ -1,9 +1,9 @@
 # clone_cell
 
-clone_cell provides a `Cell` implementation that works with types whose `Clone` implementations are
+clone_cell provides a `Cell` implementation that works with types whose `clone` methods are
 guaranteed not to mutate the `Cell` content through the `&self` reference. This is enforced with the
 provided `PureClone` trait, which is a subtrait of `Clone` (and a logical supertrait of `Copy`). It
-is only implemented for types with compliant `clone` methods.
+is only implemented for types with a compliant `clone` method.
 
 ## Overview
 

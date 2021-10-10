@@ -1,8 +1,7 @@
-//! This crate provides a [`Cell`](cell::Cell) implementation that works with types whose `Clone`
-//! implementations are guaranteed not to mutate the `Cell` content using the `&self`
-//! reference. This is enforced with the provided [`PureClone`] trait, which is a subtrait of
-//! [`Clone`] (and a logical supertrait of [`Copy`]). It is only implemented for types with a
-//! compliant `clone` method.
+//! This crate provides a [`Cell`](cell::Cell) implementation that works with types whose `clone`
+//! methods are guaranteed not to mutate the `Cell` content using the `&self` reference. This is
+//! enforced with the provided [`PureClone`] trait, which is a subtrait of [`Clone`] (and a logical
+//! supertrait of [`Copy`]). It is only implemented for types with a compliant `clone` method.
 //!
 //! See the [`cell`](module@cell) module documentation for more information on how to use it.
 //!
@@ -11,13 +10,13 @@
 //! To enable interiorly mutating methods on a type stored in an [`Rc`](alloc::rc::Rc) without the
 //! overhead of a [`RefCell`](core::cell::RefCell), we can wrap each of its fields in a
 //! [`core::cell::Cell`]. But `Cell`'s [`get`](core::cell::Cell::get) method is only implemented for
-//! types that are `Copy`. This is because if the `clone` method obtains a reference to the `Cell`'s
-//! interior, it may be able to mutate its state. This can cause undefined behavior, as demonstrated
-//! in this [example].
+//! types that are `Copy`. This is because if the `clone` method obtains a reference to the
+//! containing `Cell`, it may be able to mutate its state. This can cause undefined behavior, as
+//! demonstrated in this [example].
 //!
 //! By restricting ourselves to a checked subset of `Clone` implementations that do not exploit
 //! interior mutability to mutate the `Cell` content, it becomes possible to provide a `Cell` with a
-//! `get` method that does not require `Copy` types.
+//! `get` method that does not require the type to be `Copy`.
 //!
 //! See the documentation for [`PureClone`] for a list of implemented types and the [`clone`] module
 //! documentation for more details.
