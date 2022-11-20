@@ -1,6 +1,7 @@
 #![cfg(feature = "derive")]
 
 use std::rc::Rc;
+use std::sync::Arc;
 
 use clone_cell::{cell::Cell, clone::PureClone};
 
@@ -73,6 +74,7 @@ fn type_params() {
         t: Rc<T>,
         foo: Rc<Foo>,
         bar: Bar<U>,
+        foobar: Arc<Bar<U>>,
     }
 
     let bar = Bar { t: 42 };
@@ -80,10 +82,12 @@ fn type_params() {
         t: Rc::new(Foo),
         foo: Rc::new(Foo),
         bar,
+        foobar: Arc::new(Bar { t: 43 })
     };
     assert_eq!(*baz.pure_clone().t, Foo);
     assert_eq!(*baz.pure_clone().foo, Foo);
     assert_eq!(baz.pure_clone().bar.t, 42);
+    assert_eq!(baz.pure_clone().foobar.t, 43);
 }
 
 #[test]

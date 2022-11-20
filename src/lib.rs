@@ -7,9 +7,10 @@
 //!
 //! # Background
 //!
-//! To enable interiorly mutating methods on a type stored in an [`Rc`](alloc::rc::Rc) without the
-//! overhead of a [`RefCell`](core::cell::RefCell), we can wrap each of its fields in a
-//! [`core::cell::Cell`]. But `Cell`'s [`get`](core::cell::Cell::get) method is only implemented for
+//! To enable interiorly mutating methods on a type stored in an [`Rc`](alloc::rc::Rc) or
+//! [`Arc`](alloc::sync::Arc) without the overhead of a [`RefCell`](core::cell::RefCell),
+//! we can wrap each of its fields in a [`core::cell::Cell`].
+//! But `Cell`'s [`get`](core::cell::Cell::get) method is only implemented for
 //! types that are `Copy`. This is because if the `clone` method obtains a reference to the
 //! containing `Cell`, it may be able to mutate its state. This can cause undefined behavior, as
 //! demonstrated in this [example].
