@@ -1,4 +1,5 @@
 use std::rc::{Rc, Weak};
+use std::sync::Arc;
 
 use clone_cell::cell::Cell;
 
@@ -36,6 +37,27 @@ fn pure_clone_fields() {
     assert_eq!(*f.x.get(), 42);
     assert_eq!(*f.y.get().unwrap(), 42);
     f.x.set(Rc::new(0));
+    assert_eq!(*f.x.get(), 0);
+    assert_eq!(*f.y.get().unwrap(), 42);
+}
+
+#[test]
+fn pure_clone_fields_arc() {
+    struct Foo {
+        x: Cell<Arc<i32>>,
+        y: Cell<Option<Arc<i32>>>,
+    }
+
+    let f = Rc::new(Foo {
+        x: Cell::new(Arc::new(0)),
+        y: Cell::new(None),
+    });
+    let i = Arc::new(42);
+    f.x.set(i.clone());
+    f.y.set(Some(i));
+    assert_eq!(*f.x.get(), 42);
+    assert_eq!(*f.y.get().unwrap(), 42);
+    f.x.set(Arc::new(0));
     assert_eq!(*f.x.get(), 0);
     assert_eq!(*f.y.get().unwrap(), 42);
 }

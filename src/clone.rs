@@ -27,30 +27,36 @@
 ///
 /// ```
 /// use std::rc::Rc;
+/// use std::sync::Arc;
 /// use clone_cell::{cell::Cell, clone::PureClone};
 ///
 /// // Note: This also generates a `Clone` impl.
 /// #[derive(PureClone)]
 /// struct Foo<T> {
 ///     p: Rc<T>, // `Rc<T>` is always `PureClone`.
+///     ap: Arc<T>, // `Arc<T>` is always `PureClone`.
 ///     t: Option<T>, // `Option<T>` is `PureClone` if `T` is.
 ///     x: i32, // `i32` is `PureClone`.
 /// }
 ///
 /// let p = Rc::new(-42);
+/// let ap = Arc::new(-42);
 /// let f = Cell::new(Foo {
 ///     p: p.clone(),
+///     ap: ap.clone(),
 ///     t: Some(0),
 ///     x: 0,
 /// });
 ///
 /// f.set(Foo {
 ///     p,
+///     ap,
 ///     t: Some(42),
 ///     x: 21,
 /// });
 ///
 /// assert_eq!(*f.get().p, -42);
+/// assert_eq!(*f.get().ap, -42);
 /// assert_eq!(f.get().t, Some(42));
 /// assert_eq!(f.get().x, 21);
 /// ```
@@ -73,6 +79,7 @@ mod impls {
     use alloc::{
         boxed::Box,
         rc::{Rc, Weak},
+        sync::{Arc, Weak as SyncWeak},
         vec::Vec,
     };
 
@@ -121,6 +128,7 @@ mod impls {
 
     impl_pure_clone_rc! {
         Rc<T> Weak<T>
+        Arc<T> SyncWeak<T>
     }
 
     impl_pure_clone_generic! {
