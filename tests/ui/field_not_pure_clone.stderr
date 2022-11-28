@@ -1,11 +1,10 @@
 error[E0277]: the trait bound `Foo: PureClone` is not satisfied
-  --> $DIR/field_not_pure_clone.rs:8:8
-   |
-8  |     f: Foo,
-   |        ^^^ the trait `PureClone` is not implemented for `Foo`
-   |
-note: required by `pure_clone`
-  --> $DIR/clone.rs:66:5
-   |
-66 |     fn pure_clone(&self) -> Self {
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ --> tests/ui/field_not_pure_clone.rs:8:8
+  |
+8 |     f: Foo,
+  |        ^^^ the trait `PureClone` is not implemented for `Foo`
+  |
+help: consider borrowing here
+  |
+8 |     f: &Foo,
+  |        +
