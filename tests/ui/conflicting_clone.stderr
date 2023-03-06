@@ -1,5 +1,5 @@
-error[E0119]: conflicting implementations of trait `std::clone::Clone` for type `Foo`
- --> $DIR/conflicting_clone.rs:3:10
+error[E0119]: conflicting implementations of trait `Clone` for type `Foo`
+ --> tests/ui/conflicting_clone.rs:3:10
   |
 3 | #[derive(PureClone)]
   |          ^^^^^^^^^ conflicting implementation for `Foo`
