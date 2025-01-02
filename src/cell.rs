@@ -76,12 +76,15 @@ impl<T> Cell<T> {
         // place. This prevents potential infinite recursion that can otherwise occur
         // if `T` contains a reference back to this `Cell`, and `T::drop` calls us
         // again.
-        let old = self.replace(value);
-        drop(old);
+        self.replace(value);
     }
 
     /// Swaps the values of two `Cell`s. Unlike `std::mem::swap`, this does not require a `&mut`
     /// reference.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `self` and `other` are different `Cell`s that partially overlap.
     ///
     /// # Examples
     ///
@@ -100,6 +103,16 @@ impl<T> Cell<T> {
         if ptr::eq(self, other) {
             return;
         }
+
+        // Check if the two overlap.
+        let src_usize = self as *const Self as usize;
+        let dst_usize = other as *const Self as usize;
+        let diff = src_usize.abs_diff(dst_usize);
+        if diff < size_of::<Self>() {
+            // See https://github.com/rust-lang/rust/issues/80778 for more information.
+            panic!("`Cell::swap` on overlapping non-identical `Cell`s");
+        }
+
         // SAFETY: Only safe because `Cell` is `!Sync`. Also, no pointers are
         // invalidated since `Cell` never returns references to its content.
         unsafe {
@@ -299,7 +312,7 @@ where
 
 impl<T> From<T> for Cell<T> {
     fn from(t: T) -> Self {
-        Cell::new(t)
+        Self::new(t)
     }
 }
 
