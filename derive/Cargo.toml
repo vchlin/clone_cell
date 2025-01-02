@@ -1,18 +1,18 @@
 [package]
 name = "clone_cell_derive"
-version = "0.2.0"
-edition = "2018"
-authors = ["Vektorlynk"]
+version = "0.2.1"
+edition = "2021"
+authors = ["vchlin"]
 license = "MIT OR Apache-2.0"
 description = "Proc macro for clone_cell"
-repository = "https://github.com/Vektorlynk/clone_cell"
+repository = "https://github.com/vchlin/clone_cell"
 documentation = "https://docs.rs/clone_cell_derive"
 
 [lib]
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "1.0.29"
-quote = "1.0.9"
+proc-macro2 = "1.0.92"
+quote = "1.0.38"
 syn = "2.0.94"
 synstructure = "0.13.1"

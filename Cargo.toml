@@ -1,11 +1,11 @@
 [package]
 name = "clone_cell"
-version = "0.4.0"
-edition = "2018"
-authors = ["Vektorlynk"]
+version = "0.4.1"
+edition = "2021"
+authors = ["vchlin"]
 license = "MIT OR Apache-2.0"
 description = "A Cell that works with a restrictive form of Clone"
-repository = "https://github.com/Vektorlynk/clone_cell"
+repository = "https://github.com/vchlin/clone_cell"
 documentation = "https://docs.rs/clone_cell"
 readme = "README.md"
 keywords = ["clone", "cell", "mutability"]
@@ -18,9 +18,7 @@ derive = ["clone_cell_derive"]
 clone_cell_derive = { version = "0.2.0", path = "derive", optional = true }
 
 [dev-dependencies]
-trybuild = "1.0.45"
+trybuild = "1.0.101"
 
 [workspace]
-members = [
-    "derive",
-]
+members = ["derive"]

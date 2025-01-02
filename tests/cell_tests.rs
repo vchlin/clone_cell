@@ -1,3 +1,4 @@
+use std::mem::transmute;
 use std::rc::{Rc, Weak};
 use std::sync::Arc;
 
@@ -134,4 +135,32 @@ fn cycle() {
     let observer = Observer::new(observable);
     observer.poke_observable();
     assert_eq!(weak_observable.upgrade().is_none(), true);
+}
+
+fn as_cell_of_array<T, const N: usize>(c: &[Cell<T>; N]) -> &Cell<[T; N]> {
+    unsafe { transmute(c) }
+}
+
+#[test]
+#[should_panic]
+fn swap_overlap() {
+    // Example from https://github.com/rust-lang/rust/issues/80778.
+    let x = [Cell::new(vec![1]), Cell::new(vec![2]), Cell::new(vec![3])];
+    let x1: &Cell<[_; 2]> = as_cell_of_array(x[0..2].try_into().unwrap());
+    let x2: &Cell<[_; 2]> = as_cell_of_array(x[1..3].try_into().unwrap());
+    // This should panic.
+    x1.swap(x2);
+}
+
+#[test]
+fn swap_nonoverlap() {
+    let x = [
+        Cell::new(vec![1]),
+        Cell::new(vec![2]),
+        Cell::new(vec![3]),
+        Cell::new(vec![4]),
+    ];
+    let x1: &Cell<[_; 2]> = as_cell_of_array(x[0..2].try_into().unwrap());
+    let x2: &Cell<[_; 2]> = as_cell_of_array(x[2..4].try_into().unwrap());
+    x1.swap(x2);
 }
