@@ -8,6 +8,7 @@ description = "A Cell that works with a restrictive form of Clone"
 repository = "https://github.com/vchlin/clone_cell"
 documentation = "https://docs.rs/clone_cell"
 readme = "README.md"
+categories = ["data-structures", "no-std", "rust-patterns"]
 keywords = ["clone", "cell", "mutability"]
 
 [features]
