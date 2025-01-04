@@ -1,8 +1,8 @@
 # clone_cell
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/vchlin/clone_cell/ci.yml?style=flat-square)
-![Crates.io Version](https://img.shields.io/crates/v/clone_cell?style=flat-square)
-![docs.rs](https://img.shields.io/docsrs/clone_cell?style=flat-square)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/vchlin/clone_cell/ci.yml?style=flat-square)](https://github.com/vchlin/clone_cell/actions/workflows/ci.yml)
+[![Crates.io Version](https://img.shields.io/crates/v/clone_cell?style=flat-square)](https://crates.io/crates/clone_cell)
+[![docs.rs](https://img.shields.io/docsrs/clone_cell?style=flat-square)](https://docs.rs/clone_cell)
 ![Crates.io License](https://img.shields.io/crates/l/clone_cell?style=flat-square)
 
 clone_cell provides a `Cell` implementation that works with types whose `clone` methods are
