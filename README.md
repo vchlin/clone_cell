@@ -1,5 +1,10 @@
 # clone_cell
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/vchlin/clone_cell/ci.yml?style=flat-square)
+![Crates.io Version](https://img.shields.io/crates/v/clone_cell?style=flat-square)
+![docs.rs](https://img.shields.io/docsrs/clone_cell?style=flat-square)
+![Crates.io License](https://img.shields.io/crates/l/clone_cell?style=flat-square)
+
 clone_cell provides a `Cell` implementation that works with types whose `clone` methods are
 guaranteed not to mutate the `Cell` content through the `&self` reference. This is enforced with the
 provided `PureClone` trait, which is a subtrait of `Clone` (and a logical supertrait of `Copy`). It
