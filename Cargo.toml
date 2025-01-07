@@ -13,7 +13,7 @@ keywords = ["clone", "cell", "mutability"]
 
 [features]
 default = ["derive"]
-derive = ["clone_cell_derive"]
+derive = ["dep:clone_cell_derive"]
 
 [dependencies]
 clone_cell_derive = { version = "0.2.2", path = "derive", optional = true }
