@@ -1,5 +1,2 @@
-.devcontainer/
-
-# Build files
-/target
 Cargo.lock
+target/
