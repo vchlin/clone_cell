@@ -8,13 +8,14 @@ on:
   schedule:
     - cron: "42 3 * * 4"
 
+permissions:
+  contents: read
+
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-    permissions: {}
-
     runs-on: ubuntu-latest
 
     steps:
