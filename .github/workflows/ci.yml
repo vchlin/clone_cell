@@ -8,15 +8,16 @@ on:
   schedule:
     - cron: "42 3 * * 4"
 
+permissions:
+  contents: read
+
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-    permissions: {}
-
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v5
     - name: Build
