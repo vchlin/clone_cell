@@ -2,9 +2,20 @@ error[E0277]: the trait bound `Foo: PureClone` is not satisfied
  --> tests/ui/field_not_pure_clone.rs:8:8
   |
 8 |     f: Foo,
-  |        ^^^ the trait `PureClone` is not implemented for `Foo`
+  |        ^^^ unsatisfied trait bound
   |
-help: consider borrowing here
+help: the trait `PureClone` is not implemented for `Foo`
+ --> tests/ui/field_not_pure_clone.rs:4:1
   |
-8 |     f: &Foo,
-  |        +
+4 | struct Foo;
+  | ^^^^^^^^^^
+  = help: the following other types implement trait `PureClone`:
+            &T
+            ()
+            (A, B)
+            (A, B, C)
+            (A, B, C, D)
+            (A, B, C, D, E)
+            (A, B, C, D, E, F)
+            (A, B, C, D, E, F, G)
+          and $N others
