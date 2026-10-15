@@ -31,10 +31,10 @@ help: the trait `PureClone` is not implemented for `Foo`
   = help: the following other types implement trait `PureClone`:
             &T
             ()
+            (A,)
             (A, B)
             (A, B, C)
             (A, B, C, D)
             (A, B, C, D, E)
             (A, B, C, D, E, F)
-            (A, B, C, D, E, F, G)
           and $N others
